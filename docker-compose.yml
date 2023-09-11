@@ -1,0 +1,126 @@
+version: '3.7'
+
+services:
+  api:
+    build: .
+    container_name: api
+    restart: unless-stopped
+    ports:
+      - ${API_PORT}:${API_PORT}
+    networks:
+      - mynetwork
+    depends_on:
+      - pgadmin
+    env_file:
+      - .env
+    volumes:
+      - ./theo:/app:cached
+      - ~/.ssh:/root/.ssh
+      - ~/.bash_history:/root/.bash_history
+    command: python run_api.py
+
+  bot:
+    build: .
+    container_name: bot
+    restart: unless-stopped
+    depends_on:
+      - db
+      - api
+    networks:
+      - mynetwork
+    volumes:
+      - ./theo:/app:cached
+      - ~/.ssh:/root/.ssh
+      - ~/.bash_history:/root/.bash_history
+    env_file:
+      - .env
+    command: python run_bot.py
+
+  celery:
+    build: .
+    container_name: celery
+    restart: unless-stopped
+    networks:
+      - mynetwork
+    env_file:
+      - .env
+    volumes:
+      - ./theo:/app
+    depends_on:
+      - redis
+      - flower
+      - bot
+    command: celery -A app.core.celery:celery_app worker -l info
+
+  redis:
+    image: redis:6-alpine
+    container_name: redis
+    restart: unless-stopped
+    networks:
+      - mynetwork
+    ports:
+    - "6379:6379"
+
+  flower:
+    build: .
+    container_name: flower
+    working_dir: /app
+    env_file:
+      - .env
+    volumes:
+      - ./theo:/app
+    networks:
+      - mynetwork
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+    command: celery -A app.core.celery:celery_app --broker=redis://redis:6379/0 flower --port=5555
+
+  db:
+    image: postgres:15.2-alpine
+    container_name: db
+    ports:
+      - ${DATABASE_PORT}:${DATABASE_PORT}
+    networks:
+      - mynetwork
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+
+  pgadmin:
+    container_name: pgadmin
+    restart: unless-stopped
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=pgadmin4@pgadmin.org
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - 5050:80
+    networks:
+      - mynetwork
+    depends_on:
+      - db
+
+  front:
+    build:
+      context: ./frontend
+    container_name: front
+    volumes:
+#      - ./frontend/client:/app:cached
+      - ./frontend/client/dist:/usr/share/nginx/html
+#      - ./frontend/client/public:/usr/share/nginx/html
+      - ~/.ssh:/root/.ssh
+    depends_on:
+      - api
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    networks:
+      - mynetwork
+
+
+
+networks:
+  mynetwork:
+    driver: bridge
