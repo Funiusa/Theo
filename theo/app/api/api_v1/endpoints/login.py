@@ -15,8 +15,8 @@ router = APIRouter()
 
 @router.post("/login/", response_model=schemas.Token)
 async def login_access_token(
-        form_data: OAuth2PasswordRequestForm = Depends(),
-        db: Session = Depends(get_session),
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_session),
 ):
     user = crud.user.authenticate(
         db, email=form_data.username, password=form_data.password

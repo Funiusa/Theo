@@ -24,8 +24,24 @@ class Settings(BaseSettings):
     API_DBG: bool = os.getenv("API_DEBUG")
     OPEN_API_URL: str = f"{API_V1_STR}/openapi.json"
 
+    AWS_BUCKET: str = os.environ["AWS_BUCKET"]
+    AWS_BUCKET_FOLDER: str = os.environ["AWS_BUCKET_FOLDER"]
+    AWS_ACCESS_KEY_ID: str = os.environ["AWS_ACCESS_KEY_ID"]
+    AWS_SECRET_ACCESS_KEY: str = os.environ["AWS_SECRET_ACCESS_KEY"]
+    AWS_API_URL: str = os.environ["AWS_API_URL"]
+
     BOT_TOKEN: str = os.environ["BOT_TOKEN"]
     # BOT_LINK: str = os.environ["BOT_LINK"]
+    API_ID: int = os.environ["API_ID"]
+    APP_API_HASH: str = os.environ["APP_API_HASH"]
+    DONORS_LIST: List[int] = [
+        -1001800996216,
+        -1001872775449,
+        -1001852652515,
+        -1001381822968,
+    ]
+    TECHNICAL_CHANNEL: int = os.environ["TECHNICAL_CHANNEL"]
+    BACKEND_MAIN_CHANNEL: int = os.environ["BACKEND_CHANNEL"]
 
     DB_NAME: str = os.getenv("DATABASE_NAME")
     DB_USER: str = os.getenv("DATABASE_USER")
@@ -55,7 +71,8 @@ class Settings(BaseSettings):
     SU_USER_PASS = os.environ["SU_USER_PASS"]
 
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
-        "http://localhost:8080", "http://0.0.0.0:8080"
+        "http://localhost:8080",
+        "http://0.0.0.0:8080",
     ]
 
     # Security

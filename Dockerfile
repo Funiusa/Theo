@@ -25,10 +25,13 @@ RUN apt-get update -qq \
         unzip \
         vim \
         wget \
+        fontconfig \
     && apt-get clean \
     && rm -rf /var/cache/apt/archives/* \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    && truncate -s 0 /var/log/*log
+    && truncate -s 0 /var/log/*log \
+
+RUN apt install fonts-roboto
 
 RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=$HOME/.poetry/ python3 -
 

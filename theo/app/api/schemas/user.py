@@ -1,4 +1,6 @@
 from pydantic import BaseModel, Field
+from .cribbly import Cribbly
+from typing import List
 
 
 class UserBase(BaseModel):
@@ -31,6 +33,7 @@ class UserInDBBase(UserBase):
 
 class User(UserInDBBase):
     telegram_id: int | None = None
+    cribblies: List[Cribbly] | None = []
 
 
 class UserInDB(UserInDBBase):

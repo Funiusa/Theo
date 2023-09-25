@@ -11,7 +11,6 @@ from app.bot.dispatcher import scheduler
 
 async def on_startup(dispatcher: Dispatcher):
     await set_default_commands(dispatcher)
-
     scheduler.add_job(send_item_cron, trigger="cron", hour="9-21", minute="0")
     scheduler.start()
 

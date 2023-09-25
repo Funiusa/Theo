@@ -5,7 +5,7 @@ import markdown
 class MyHTMLParser(HTMLParser):
     def __init__(self):
         super().__init__()
-        self.allowed_tags = {'a', 'b', 'strong', 'i', 'em', 'code', 'pre'}
+        self.allowed_tags = {"a", "b", "strong", "i", "em", "code", "pre"}
         self.sanitized_data = []
 
     def handle_starttag(self, tag, attrs):
@@ -14,7 +14,7 @@ class MyHTMLParser(HTMLParser):
         elif "li" in tag:
             self.sanitized_data.append("* ")
         elif tag not in self.allowed_tags:
-            self.sanitized_data.append('')
+            self.sanitized_data.append("")
 
     def handle_endtag(self, tag):
         if "h" in tag or "strong" in tag:
@@ -28,4 +28,4 @@ def sanitize_html(text):
     html_text = markdown.markdown(text)
     parser = MyHTMLParser()
     parser.feed(html_text)
-    return ''.join(parser.sanitized_data)
+    return "".join(parser.sanitized_data)

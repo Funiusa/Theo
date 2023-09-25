@@ -24,10 +24,7 @@ async def order(message: types.Message):
                 label="Discount",
                 amount=-20000,
             ),
-            types.LabeledPrice(
-                label="Bonus",
-                amount=-40000
-            )
+            types.LabeledPrice(label="Bonus", amount=-40000),
         ],
         max_tip_amount=5000,
         suggested_tip_amounts=[1000, 2000, 3000, 4000],

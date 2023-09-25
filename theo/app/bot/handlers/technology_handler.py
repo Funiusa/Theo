@@ -1,9 +1,12 @@
-from aiogram import types
+from aiogram import types, exceptions
 from app.api import crud
-from app.bot.dispatcher import dp
+from app.bot.dispatcher import dp, bot
 from app.database.session import db
 from app.bot.keyboards.ikb import ikb_back_main
 from app.bot.utils.sanitize_message import sanitize_html
+from app.core.s3_storage import create_presigned_url, bucket
+
+title_image = "theo_images/title_image.jpeg"
 
 
 @dp.message_handler(commands=["technologies"])
@@ -15,9 +18,13 @@ async def all_technologies(message: types.Message) -> None:
                 types.InlineKeyboardButton(text=t.title, callback_data=f"tech_{t.id}")
                 for t in crud.technology.get_multi(db)
             ]
-        ]
+        ],
     )
-    await message.answer("<b>List of technologies</b>", reply_markup=main_markup)
+    answer_text = "<b>List of technologies</b>\n\n\n"
+    image_url = create_presigned_url(file_key=title_image)
+    await message.answer_photo(
+        photo=image_url, caption=answer_text, reply_markup=main_markup
+    )
 
 
 @dp.callback_query_handler(lambda c: c.data.startswith("back_main"))
@@ -30,9 +37,12 @@ async def main_menu_technologies(call: types.CallbackQuery):
                 types.InlineKeyboardButton(text=t.title, callback_data=f"tech_{t.id}")
                 for t in crud.technology.get_multi(db)
             ]
-        ]
+        ],
     )
-    await call.message.edit_text("<b>List of technologies</b>", reply_markup=main_markup)
+    answer_text = "<b>List of technologies</b>\n\n"
+    image_url = create_presigned_url(file_key=title_image)
+    media = types.InputMediaPhoto(media=image_url, caption=answer_text)
+    await call.message.edit_media(media=media, reply_markup=main_markup)
 
 
 @dp.callback_query_handler(lambda c: c.data.startswith("tech_"))
@@ -55,4 +65,6 @@ async def technology_main(call: types.CallbackQuery):
     sanitized_html_text = sanitize_html(technology.description)
     answer_text = f"<b>{technology.title}</b>\n\n{sanitized_html_text}"
 
-    await call.message.edit_text(text=answer_text, reply_markup=ikb_markup)
+    image_url = create_presigned_url(file_key=technology.image)
+    media = types.InputMediaPhoto(media=image_url, caption=answer_text)
+    await call.message.edit_media(media=media, reply_markup=ikb_markup)

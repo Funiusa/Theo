@@ -1,4 +1,5 @@
 from .token import TokenPayload, Token
 from .user import User, UserCreate, UserUpdate, UserTelegramUpdate
-from .technology import Technology, TechnologyCreate, TechnologyUpdate
-from .item import Item, ItemCreate, ItemUpdate
+from .cribbly import Cribbly, CribblyCreate, CribblyUpdate
+from .crabble import Crabble, CrabbleUpdate, CrabbleCreate
+from .boom import Boom, BoomCreate, BoomUpdate

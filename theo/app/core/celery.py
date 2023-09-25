@@ -15,5 +15,3 @@ celery_app.conf.result_backend = settings.CELERY_RESULT_BACKEND
 @celery_app.task(serializer="json")
 def send_message_to_telegram(username: str, telegram_id: int, body: str):
     loop = asyncio.get_event_loop()
-
-
